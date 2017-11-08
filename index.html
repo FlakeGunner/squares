@@ -1,0 +1,105 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+	<meta charset="UTF-8" />
+	<title>Random Squares</title>
+	<script type="text/javascript" src="js/phaser.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+const CELL_SIZE = 20;
+const NUMBER_OF_COLUMNS = 40;
+const NUMBER_OF_ROWS = 30;
+
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update});
+
+function preload() {
+	
+}
+
+function create() {
+	
+	var graphics = game.add.graphics(0, 0);
+
+	game.stage.backgroundColor = '#FBFAFA';
+
+	drawColumns(graphics);
+
+	window.graphics = graphics;
+
+}
+
+function drawColumns(graphics) {
+
+	for(var i = 0; i < NUMBER_OF_COLUMNS; i++) {
+
+		var randomColourStart = getRandomColorHex();
+
+		var randomColourEnd = getRandomColorHex();	
+
+		drawRow(graphics, 0 + (i * CELL_SIZE), 0, CELL_SIZE, CELL_SIZE, randomColourStart,randomColourEnd, i);
+
+	}
+}
+
+function getRandomColorHex() {
+
+	return '0x' + Phaser.Color.componentToHex( game.rnd.integerInRange(0, 255)) + Phaser.Color.componentToHex(game.rnd.integerInRange(0, 255)) + Phaser.Color.componentToHex(game.rnd.integerInRange(0, 255));
+}
+
+function drawRow(graphics, x, y, height, width, colourStartHex, colourEndHex, currentColumn)
+{
+
+	var colourStart = Phaser.Color.hexToColor(colourStartHex);
+
+	var colourEnd = Phaser.Color.hexToColor(colourEndHex);
+
+	for(var i = 0; i < NUMBER_OF_ROWS; i++) {
+
+		var colourMix = Phaser.Color.interpolateRGB(colourStart.r, colourStart.g, colourStart.b, colourEnd.r, colourEnd.g, colourEnd.b, NUMBER_OF_ROWS, i + 1);
+
+		var colourMixObject = Phaser.Color.getRGB(colourMix);
+
+		var colourMixHex = '0x' + Phaser.Color.componentToHex(colourMixObject.r) + Phaser.Color.componentToHex(colourMixObject.g) + Phaser.Color.componentToHex(colourMixObject.b);
+
+		var cellData = {x: x, y: y + (i * width), height: height, width: width, colour: colourMixHex, row: i, column: currentColumn}
+
+		game.time.events.add(300 + (i * 100) + (currentColumn * 100), delayedDrawRect, this, cellData);
+	}
+}
+
+function delayedDrawRect(cellData)
+{
+	graphics.beginFill(cellData.colour);
+	graphics.lineStyle(1, cellData.colour, 1);
+	graphics.drawRect(cellData.x, cellData.y, cellData.height, cellData.width);
+
+	if((cellData.column + 1) === NUMBER_OF_COLUMNS && (cellData.row + 1) === NUMBER_OF_ROWS) {
+			game.time.events.add(1000, delayedRedraw, this, graphics);
+			
+		}
+}
+
+function delayedRedraw(graphics)
+{
+	graphics.clear();
+	drawColumns(graphics);
+}
+
+function update() {
+
+}
+
+
+	
+</script>
+
+</body>
+</html>
