@@ -71,7 +71,7 @@ function drawRow(graphics, x, y, height, width, colourStartHex, colourEndHex, cu
 
 		var cellData = {x: x, y: y + (i * width), height: height, width: width, colour: colourMixHex, row: i, column: currentColumn}
 
-		game.time.events.add(300 + (i * 100) + (currentColumn * 100), delayedDrawRect, this, cellData);
+		game.time.events.add(800 + (i * 100) + (currentColumn * 100), delayedDrawRect, this, cellData);
 	}
 }
 
